@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en-ZA">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>TAYLORFITTED — Coming soon</title>
+  <meta name="description" content="TAYLORFITTED. Coming soon.">
+  <link rel="canonical" href="https://taylorfitted.com/">
+  <meta name="theme-color" content="#FF9201">
+  <meta name="color-scheme" content="light">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://taylorfitted.com/">
+  <meta property="og:title" content="TAYLORFITTED — Coming soon">
+  <meta property="og:description" content="TAYLORFITTED. Coming soon.">
+  <meta property="og:image" content="https://taylorfitted.com/assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Placeholder favicon using the brand gradient. Replace with a real mark. -->
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3ClinearGradient id='g' x1='0' y1='0' x2='32' y2='0' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23FF9201'/%3E%3Cstop offset='1' stop-color='%239556EB'/%3E%3C/linearGradient%3E%3Crect width='32' height='32' rx='6' fill='url(%23g)'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="assets/backdrop.jpg">
+  <link rel="preload" as="image" href="assets/mark-base.svg">
+  <link rel="preload" as="image" href="assets/mark-detail.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@800&display=swap" rel="stylesheet">
+
+  <style>
+    /* Tokens taken from Figma node 88:10140 (Desktop - 6), a 1440x1024 frame. */
+    :root {
+      --ink: #030303;
+      --grad-start: #FF9201;
+      --grad-end: #9556EB;
+
+      /* Both wash layers use the same fill; only the blend mode differs. */
+      --wash: linear-gradient(125.0026deg, var(--grad-start) 0.50658%, var(--grad-end) 100%);
+
+      /* Mark bottom 468.86 -> label top 499.16, label bottom 530.16 -> icon top 629.10. */
+      --gap-mark-to-label: 24px;
+      --gap-label-to-social: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 2rem 1.25rem;
+      background-color: var(--ink);
+      font-family: "Almarai", system-ui, -apple-system, sans-serif;
+    }
+
+    /* ---- Backdrop -----------------------------------------------------------
+    Three Figma layers, bottom to top: the photo (blur 12.5, opacity 75%),
+    then the brand gradient twice — once plus-lighter, once hard-light. The
+    frame fill behind the 75% photo is the brand black, which is what keeps
+    the result warm. `isolation` keeps the blends off the rest of the page. */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      isolation: isolate;
+      overflow: hidden;
+      background-color: var(--ink);
+      pointer-events: none;
+    }
+
+    /* Figma frames the 2007.8x1123.6 photo box at (-537.08, -49.78) in 1440x1024. */
+    .backdrop__photo {
+      position: absolute;
+      left: -37.297%;
+      top: -4.861%;
+      width: 139.433%;
+      height: 109.722%;
+      object-fit: cover;
+      opacity: 0.75;
+      /* The photo is desaturated before the washes colour it — back-solving the
+      Figma composite gives a neutral base, not the photo's own blues. */
+      filter: grayscale(1) blur(12.5px);
+    }
+
+    .backdrop__wash {
+      position: absolute;
+      inset: 0;
+      background-image: var(--wash);
+    }
+
+    /* Without plus-lighter this falls back to normal and flattens to the
+    gradient, which is an acceptable degradation. */
+    .backdrop__wash--lighter {
+      mix-blend-mode: plus-lighter;
+    }
+
+    .backdrop__wash--hard {
+      mix-blend-mode: hard-light;
+    }
+
+    /* ---- Oversized wordmarks ------------------------------------------------
+    1440-wide vectors pinned flush to the top and bottom edges of the frame.
+    The 10% ink opacity is baked into the SVGs. */
+    .edge-word {
+      position: fixed;
+      left: 0;
+      z-index: 1;
+      display: block;
+      width: 100%;
+      height: auto;
+      pointer-events: none;
+    }
+
+    .edge-word--top {
+      top: 0;
+    }
+
+    .edge-word--bottom {
+      bottom: 0;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* ---- Logo mark ----------------------------------------------------------
+    A 106.77x105.96 box holding three stacked layers: a blurred shadow, the
+    gradient base, and the black linework over it. Each layer's artwork bleeds
+    past the box by a different amount, so they are pinned by the offsets
+    Figma reports rather than centred — each SVG keeps its intrinsic size. */
+    .mark {
+      position: relative;
+      width: 106.769px;
+      height: 105.959px;
+    }
+
+    .mark img {
+      position: absolute;
+      max-width: none;
+    }
+
+    .mark__shadow {
+      left: -4.527px;
+      top: -4.178px;
+    }
+
+    .mark__base {
+      left: -4.576px;
+      top: -0.5px;
+    }
+
+    .mark__detail {
+      left: -0.288px;
+      top: -0.25px;
+    }
+
+    .label {
+      margin: var(--gap-mark-to-label) 0 0;
+      font-size: clamp(1.0625rem, 1.944vw, 1.75rem);
+      /* 28px at 1440 */
+      font-weight: 800;
+      line-height: normal;
+      letter-spacing: 0.05em;
+      /* 1.4px at 28px */
+      color: rgba(0, 0, 0, 0.75);
+      white-space: nowrap;
+    }
+
+    .email a {
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(0, 0, 0, 0.75);
+      font-family: "Work Sans", system-ui, -apple-system, sans-serif;
+    }
+
+    .email a:hover {
+      opacity: 0.7;
+    }
+
+    /* ---- Social -------------------------------------------------------------
+    Figma flattens this row into one shape, so the icons are drawn from the
+    project's own Instagram/YouTube vectors — the same paths Figma exports.
+    Links are padded to a 44px target, and the 14px gap plus that padding
+    reproduces the design's 20px ink spacing either side of the rule. */
+    .social {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 14px;
+      /* The link padding is pulled back out of the column so the block centres on
+      the icon ink, the way the design's 298.19px stack does. */
+      margin-top: calc(var(--gap-label-to-social) - 6px);
+      margin-bottom: -6px;
+    }
+
+    .social a {
+      display: block;
+      padding: 6px;
+      border-radius: 8px;
+      transition: opacity 160ms ease;
+    }
+
+    .social a:hover {
+      opacity: 0.7;
+    }
+
+    .social a:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .social__rule {
+      width: 1px;
+      height: 20px;
+      border-radius: 0.5px;
+      background-color: var(--ink);
+    }
+
+    /* The icon files are drawn in the old off-white; brightness(0) takes them to
+    the design's ink without touching the vectors. */
+    .icon {
+      display: block;
+      filter: brightness(0);
+    }
+
+    .icon--instagram {
+      width: 28px;
+      height: 28px;
+    }
+
+    .icon--youtube {
+      width: 37.26px;
+      height: 26.1px;
+    }
+
+    /* holds the 27:19 source ratio */
+
+    /* No mobile frame was supplied. The wordmarks scale with the viewport on
+    their own; the backdrop drops the desktop crop so the photo is not zoomed
+    to a flat wash on a portrait screen, and the vertical rhythm tightens. */
+    @media (max-width: 767px) {
+      :root {
+        --gap-label-to-social: 32px;
+      }
+
+      .backdrop__photo {
+        left: -5%;
+        top: -5%;
+        width: 110%;
+        height: 110%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="backdrop" aria-hidden="true">
+    <img class="backdrop__photo" src="assets/backdrop.jpg" alt="">
+    <div class="backdrop__wash backdrop__wash--lighter"></div>
+    <div class="backdrop__wash backdrop__wash--hard"></div>
+  </div>
+
+  <img class="edge-word edge-word--top" src="assets/taylor.svg" width="1440" height="208" alt="" aria-hidden="true">
+  <img class="edge-word edge-word--bottom" src="assets/fitted.svg" width="1440" height="230" alt="" aria-hidden="true">
+
+  <main>
+    <div class="mark" role="img" aria-label="TAYLORFITTED">
+      <img class="mark__shadow" src="assets/mark-shadow.svg" alt="">
+      <img class="mark__base" src="assets/mark-base.svg" alt="">
+      <img class="mark__detail" src="assets/mark-detail.svg" alt="">
+    </div>
+
+    <p class="label">COMING SOON</p>
+    <p class="email"><a href="mailto:onlytaylorfitted@gmail.com">onlytaylorfitted@gmail.com</a></p>
+
+    <div class="social">
+      <a href="https://www.instagram.com/onlytaylorfitted/" aria-label="TAYLORFITTED on Instagram" rel="me noopener"
+        target="_blank">
+        <img class="icon icon--instagram" src="assets/instagram.svg" width="32" height="32" alt="">
+      </a>
+      <span class="social__rule" aria-hidden="true"></span>
+      <a href="https://www.youtube.com/@TaylorFittedTV" aria-label="TAYLORFITTED on YouTube" rel="me noopener"
+        target="_blank">
+        <img class="icon icon--youtube" src="assets/youtube-icon.svg" width="40" height="28" alt="">
+      </a>
+    </div>
+  </main>
+
+</body>
+
+</html>
